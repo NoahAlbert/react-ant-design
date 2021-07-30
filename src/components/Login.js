@@ -1,14 +1,26 @@
+import firebase from 'firebase/app'
+import 'firebase/auth'
 import { useHistory } from 'react-router-dom'
 import { Modal, Form, Input, Button } from 'antd'
 
-function Login(){
+import { firebaseConfig } from '../fbconfig'
+
+function Login({ setUser }){
     const history = useHistory()
     const handleCancel = () => {
         history.push('/')
     }
 
-    const handleLogin = () => {
-        history.push('/')
+    const handleLogin = ({ email, password }) => {
+        if(!firebase.apps.length){
+            firebase.initializeApp(firebaseConfig)
+        }
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(res => {
+            setUser(res.user)
+            history.push('/')
+        })
+        .catch(err => alert(err.message))
     }
 
     return (
